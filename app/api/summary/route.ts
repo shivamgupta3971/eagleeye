@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     if (geminiKey) {
       try {
         const genAI = new GoogleGenerativeAI(geminiKey)
-        const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+        const candidateModels = ["gemini-flash-latest", "gemini-pro-latest", "gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
         const prompt = `Analyze these video safety key moments and provide a concise summary with: 1. Overall Summary, 2. Key Safety Concerns, 3. Notable Patterns.\n\nKey Moments:\n${momentsText}`
 
         for (const modelName of candidateModels) {

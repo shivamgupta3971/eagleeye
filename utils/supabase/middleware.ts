@@ -13,7 +13,7 @@ export const updateSession = async (request: NextRequest) => {
     });
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "placeholder-anon-key";
 
     const supabase = createServerClient(
       url,
@@ -38,16 +38,21 @@ export const updateSession = async (request: NextRequest) => {
       },
     );
 
-    // This will refresh session if expired - required for Server Components
-    // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const user = await supabase.auth.getUser();
+    // Refresh session if expired
+    const authResult = await supabase.auth.getUser().catch((err) => {
+      console.warn("Supabase auth check fetch warning:", err?.message || err);
+      return { data: { user: null }, error: err };
+    });
+
+    const user = authResult?.data?.user;
+    const authError = authResult?.error;
 
     // protected routes
-    if (request.nextUrl.pathname.startsWith("/protected") && user.error) {
+    if (request.nextUrl.pathname.startsWith("/protected") && (authError || !user)) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
-    if (request.nextUrl.pathname === "/" && !user.error) {
+    if (request.nextUrl.pathname === "/" && user && !authError) {
       return NextResponse.redirect(new URL("/protected", request.url));
     }
 

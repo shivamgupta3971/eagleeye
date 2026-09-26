@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     if (geminiKey) {
       try {
         const genAI = new GoogleGenerativeAI(geminiKey)
-        const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+        const candidateModels = ["gemini-flash-latest", "gemini-pro-latest", "gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
         let replyText = ""
         const prompt = `You are a helpful security assistant monitoring a video feed.\n${contextMessage}\nUser question: ${lastUserMessage}`
 

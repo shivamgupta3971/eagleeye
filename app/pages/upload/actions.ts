@@ -31,6 +31,8 @@ export async function detectEvents(base64Image: string): Promise<{ events: Video
         const genAI = getGenAI();
         const candidateModels = Array.from(new Set([
             process.env.GEMINI_MODEL,
+            "gemini-flash-latest",
+            "gemini-pro-latest",
             "gemini-3.6-flash",
             "gemini-2.5-flash",
             "gemini-1.5-flash",

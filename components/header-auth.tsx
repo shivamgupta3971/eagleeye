@@ -45,9 +45,8 @@ export default async function AuthButton() {
 
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+  const user = data?.user;
   return user ? (
     <div className="flex items-center gap-4">
       Hey, {user.email}!

@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
-import { redirect } from "next/navigation"
 import { CameraFeed } from "@/components/camera-feed"
 import { CameraModal } from "@/components/camera-modal"
 import { EventFeed } from "@/components/event-feed"
@@ -11,24 +11,24 @@ import { locations, events } from "@/lib/data"
 
 export default function ProtectedPage() {
   const supabase = createClient()
+  const router = useRouter()
   const [selectedCamera, setSelectedCamera] = useState<string | null>(null)
   const [videoTimes, setVideoTimes] = useState<Record<string, number>>({})
   const [hoveredCamera, setHoveredCamera] = useState<string | null>(null)
 
-  const handleAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      return redirect("/sign-in")
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getUser()
+        if (!data?.user) {
+          router.push("/sign-in")
+        }
+      } catch {
+        router.push("/sign-in")
+      }
     }
-  }
-
-  // Check auth on mount
-  useState(() => {
-    handleAuth()
-  })
+    checkAuth()
+  }, [router, supabase])
 
   const handleTimeUpdate = (cameraId: string, time: number) => {
     setVideoTimes(prev => ({
