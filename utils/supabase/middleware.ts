@@ -12,8 +12,8 @@ export const updateSession = async (request: NextRequest) => {
       },
     });
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "placeholder-anon-key";
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mblluezhnfvziztmnwvb.supabase.co";
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_IEnOi2N5FLI43GXME69eeA_9WbHXkI3";
 
     const supabase = createServerClient(
       url,
