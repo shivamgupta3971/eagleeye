@@ -49,7 +49,16 @@ export async function POST(request: Request) {
     if (geminiKey) {
       try {
         const genAI = new GoogleGenerativeAI(geminiKey)
-        const candidateModels = ["gemini-flash-latest", "gemini-pro-latest", "gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+        const candidateModels = [
+          process.env.GEMINI_MODEL,
+          "gemini-flash-lite-latest",
+          "gemini-3.5-flash-lite",
+          "gemini-3.5-flash",
+          "gemini-flash-latest",
+          "gemini-3.8-flash",
+          "gemini-pro-latest",
+          "gemini-2.5-flash"
+        ].filter(Boolean) as string[]
         let replyText = ""
         const prompt = `You are a helpful security assistant monitoring a video feed.\n${contextMessage}\nUser question: ${lastUserMessage}`
 
@@ -78,11 +87,15 @@ export async function POST(request: Request) {
 
     // 3. Informative explanation if keys had errors or were missing
     let explanation = `EagleEye Assistant is active! (${events?.length || 0} events monitored).\n\n`
-    if (openaiError?.includes('429') || openaiError?.includes('quota')) {
+    if (openaiError?.includes('429') || openaiError?.includes('quota') || openaiError?.includes('credits')) {
       explanation += `⚠️ OpenAI returned 429 (Insufficient Quota / No Credits Remaining). Please check billing at platform.openai.com.`
     } else if (openaiError) {
       explanation += `⚠️ OpenAI error: ${openaiError}`
-    } else {
+    }
+
+    if (geminiError) {
+      explanation += `\n⚠️ Gemini fallback also encountered an error: ${geminiError}`
+    } else if (!openaiError && !geminiKey) {
       explanation += `💡 Set OPENAI_API_KEY or GOOGLE_API_KEY in .env.local to enable AI chat responses.`
     }
 
